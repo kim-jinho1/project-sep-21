@@ -7,28 +7,23 @@ using FishNet.Managing.Scened;
 using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 using UnityEngine.SceneManagement;
+using SceneManager = UnityEngine.SceneManagement.SceneManager;
 
-public class SceneManager : MonoBehaviour
+public class UISceneManager : MonoBehaviour
 {
-    private void Awake()
-    {
-        //DontDestroyOnLoad(this);
-    }
-
-
-    private void Update()
-    {
-
-    }
-
     public void OnClickStartButton()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("ServerScene");
+        SceneManager.LoadScene("ServerScene");
     }
     
     public void OnClickExitButton()
     {
         Application.Quit();
+    }
+
+    public void OnClickStudyButton()
+    {
+        SceneManager.LoadScene("StudyScene");
     }
     
 }

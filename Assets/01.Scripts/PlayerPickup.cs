@@ -11,6 +11,7 @@ public class PlayerPickup : NetworkBehaviour
     [SerializeField] Transform pickupPosition;
     [SerializeField] KeyCode pickupButton = KeyCode.E;
     [SerializeField] KeyCode dropButton = KeyCode.Q;
+    [SerializeField] private GameObject mathpanel;
 
     Camera cam;
     bool hasObjectInHand;
@@ -21,11 +22,11 @@ public class PlayerPickup : NetworkBehaviour
     {
         base.OnStartClient();
 
-        if (!base.IsOwner)
+        if (!base.IsOwner) 
             enabled = false;
 
         cam = Camera.main;
-        worldObjectHolder = GameObject.FindGameObjectWithTag("WorldObjects").transform;
+        //worldObjectHolder = GameObject.FindGameObjectWithTag("WorldObjects").transform;
     }
 
     private void Update()
@@ -37,8 +38,9 @@ public class PlayerPickup : NetworkBehaviour
             Drop();
     }
 
-    void Pickup()
+    private void Pickup()
     {
+        mathpanel.SetActive(true);
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, raycastDistance, pickupLayer))
         {
             if (!hasObjectInHand)
@@ -46,10 +48,12 @@ public class PlayerPickup : NetworkBehaviour
                 SetObjectInHandServer(hit.transform.gameObject, pickupPosition.position, pickupPosition.rotation, gameObject);
                 objInHand = hit.transform.gameObject;
                 hasObjectInHand = true;
+                mathpanel.SetActive(true);
             } 
             else if(hasObjectInHand)
             {
                 Drop();
+                mathpanel.SetActive(true);
 
                 SetObjectInHandServer(hit.transform.gameObject, pickupPosition.position, pickupPosition.rotation, gameObject);
                 objInHand = hit.transform.gameObject;
@@ -59,13 +63,13 @@ public class PlayerPickup : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    void SetObjectInHandServer(GameObject obj, Vector3 position, Quaternion rotation, GameObject player)
+    private void SetObjectInHandServer(GameObject obj, Vector3 position, Quaternion rotation, GameObject player)
     {
         SetObjectInHandObserver(obj, position, rotation, player);
     }
 
     [ObserversRpc]
-    void SetObjectInHandObserver(GameObject obj, Vector3 position, Quaternion rotation, GameObject player)
+    private void SetObjectInHandObserver(GameObject obj, Vector3 position, Quaternion rotation, GameObject player)
     {
         obj.transform.position = position;
         obj.transform.rotation = rotation;
@@ -75,24 +79,25 @@ public class PlayerPickup : NetworkBehaviour
             obj.GetComponent<Rigidbody>().isKinematic = true;
     }
 
-    void Drop()
+    private void Drop()
     {
         if(!hasObjectInHand)
             return;
 
+        mathpanel.SetActive(false);
         DropObjectServer(objInHand, worldObjectHolder);
         hasObjectInHand = false;
         objInHand = null;
     }
 
     [ServerRpc(RequireOwnership = false)]
-    void DropObjectServer(GameObject obj, Transform worldHolder)
+    private void DropObjectServer(GameObject obj, Transform worldHolder)
     {
         DropObjectObserver(obj, worldHolder);
     }
 
     [ObserversRpc]
-    void DropObjectObserver(GameObject obj, Transform worldHolder)
+    private void DropObjectObserver(GameObject obj, Transform worldHolder)
     {
         obj.transform.parent = worldHolder;
 

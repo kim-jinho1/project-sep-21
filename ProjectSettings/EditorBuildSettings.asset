@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/04.Scene/ServerScene.unity
     guid: d60f3daca0748504ca9572d95b6d2b56
+  - enabled: 0
+    path: Assets/04.Scene/StudyScene.unity
+    guid: d81b943385cb56d48ba53131911223e8
   m_configObjects: {}
